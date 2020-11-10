@@ -31,7 +31,7 @@ npm i restframework-express
 
   + routes/index.js
 
-    ```json
+    ```js
     let express = require('express');
     let router = express.Router();
     let UserInfo = require('../apis/api')
