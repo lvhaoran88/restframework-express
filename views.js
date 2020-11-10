@@ -13,12 +13,13 @@ class APIView {
         throw new Error(`'${req.method}'方法不被允许`)
     }
 
-    handler_exception(err) {
-        return err.message
+    handler_exception(err, res) {
+        return res.send(err.message)
     }
 
     dispatch(req, res, next) {
         let requestMethod = req.method.toLowerCase()
+
         let response = null
         try {
             this.initial(req)
@@ -32,7 +33,7 @@ class APIView {
             }
             response = handler(req, res, next)
         } catch (e) {
-            response = this.handler_exception(e)
+            response = this.handler_exception(e, res)
         }
         return response
     }
@@ -40,6 +41,8 @@ class APIView {
 
     initial(req) {
         // auth
+        // permision
+        // throtal
     }
 
     static asView() {
@@ -54,4 +57,4 @@ class APIView {
     }
 }
 
-export {APIView}
+module.exports = APIView

@@ -28,4 +28,4 @@ declare class APIView {
     static asView(): any;
 }
 
-export {APIView}
+module.exports = APIView
