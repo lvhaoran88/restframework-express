@@ -1,6 +1,9 @@
 import {NextFunction, Request, Response} from "express";
+import {Authentication} from "restframework-express/authentication";
 
 declare class APIView {
+    authentication_classes: [Authentication] = [];
+
     get(res: Request, req: Response, next: NextFunction): any;
     get(res: Request, req: Response): any;
 
