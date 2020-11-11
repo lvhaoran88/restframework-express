@@ -26,7 +26,7 @@ npm i restframework-express
 
 + 创建一个app
 
-  ```she
+  ```shell
   .mysite
   ├── view.js
   └── urls.js
