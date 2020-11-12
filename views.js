@@ -6,7 +6,8 @@
 * @Desc     :
 */
 
-let authen = require("./authentication")
+let APIException = require('./exceptions')
+let Permissions = require("./permissions").Permissions
 
 class APIView {
     httpMethodNames = ["get", "post", "put", "patch", 'delete', "head", "options", "trace"]
@@ -15,13 +16,14 @@ class APIView {
      * 不允许的请求方法，当前视图中没有定义的方法，返回这个错误
      * @param req {Request} express的请求对象
      * @param res {Response} express的相应对象
-     * @param next {NextFuntion} 可选参数 express的上下文
+     * @param next {NextFunction} 可选参数 express的上下文
      */
     httpRequestNotAllowed(req, res, next) {
         throw new Error(`'${req.method}'方法不被允许`)
     }
 
-    authentication_classes = []
+    permissionClasses = []
+    authenticationClasses = []
 
     /**
      * 处理异常的函数
@@ -29,7 +31,7 @@ class APIView {
      * @param res {Response} express的Response对象
      * @returns {string} 返回Error的错误信息
      */
-    handler_exception(exc, res) {
+    handlerException(exc, res) {
         return res.send({detial: exc.message})
     }
 
@@ -71,59 +73,74 @@ class APIView {
 
     // 认证类实例化
     get authenticators() {
-        return this.authentication_classes.map(authenticator => {
+        return this.authenticationClasses.map(authenticator => {
             return new authenticator()
         })
     }
 
     /**
-     * 没有认证对象
-     * @param req
+     * 重置认证
+     * @param req {Request}
+     * @param userAuthTuple {any[]}
      * @private
      */
-    _not_authenticated(req, user_auth_tuple = [null, null]) {
-        Reflect.set(req, "user", user_auth_tuple[0])
-        Reflect.set(req, "auth", user_auth_tuple[1])
+    _notAuthenticated(req, userAuthTuple = [null, null]) {
+        Reflect.set(req, "user", userAuthTuple[0])
+        Reflect.set(req, "auth", userAuthTuple[1])
     }
 
     // 认证类进行认证
-    perform_authentication(req) {
+    performAuthentication(req) {
 
         for (let authenticator of this.authenticators) {
 
             try {
-                let user_auth_tuple = authenticator.authenticate(req) || null
+                let userAuthTuple = authenticator.authenticate(req) || null
 
-                if (user_auth_tuple !== null) {
-                    this._not_authenticated(req, user_auth_tuple)
+                if (userAuthTuple !== null) {
+                    this._notAuthenticated(req, userAuthTuple)
                     return
                 }
             } catch (e) {
                 // 判断e的类型是不是自己定义的异常
-                if (e instanceof authen.AuthenticationError) {
-                    this._not_authenticated(req)
+                if (e instanceof APIException) {
+                    this._notAuthenticated(req)
                 } else {
                     console.log(e)
                 }
                 throw e
             }
         }
-        this._not_authenticated(req)
+        this._notAuthenticated(req)
     }
+
+
+    /**
+     * 生成权限对象
+     * @returns {Permissions[]}
+     */
+    getPermissions() {
+        return this.permissionClasses.map(p => {
+            return new p()
+        })
+    }
+
 
     /**
      * 权限校验
      * @param req
      */
-    check_permissions(req) {
-
+    checkPermissions(req) {
+        for (let permission of this.getPermissions()) {
+            permission.hasPermission(req)
+        }
     }
 
     /**
      * 频率校验
      * @param req
      */
-    check_throttles(req) {
+    checkThrottles(req) {
 
     }
 
@@ -132,10 +149,10 @@ class APIView {
      * @param req {Request}
      * @param initkwargs {Object}
      */
-    initial(req, initkwargs) {
-        this.perform_authentication(req)
-        this.check_permissions(req)
-        this.check_throttles(req)
+    initial(req, initkwargs=null) {
+        this.performAuthentication(req)
+        this.checkPermissions(req)
+        this.checkThrottles(req)
     }
 
 
@@ -143,19 +160,19 @@ class APIView {
      * 请求分发
      * @param req {Request} express的请求对象
      * @param res {Response} express的相应对象
-     * @param next {NextFuntion} 可选参数 express的上下文
+     * @param next {NextFunction} 可选参数 express的上下文
      * @returns {*} 返回响应结果
      */
     dispatch(req, res, next) {
         let requestMethod = req.method.toLowerCase()
 
-        let response = null
+        let response
         try {
             // 处理请求
             this.initial(req)
 
             // 做反射
-            let handler = null
+            let handler
             if (this.httpMethodNames.indexOf(requestMethod) > -1 &&
                 Reflect.has(this, requestMethod)
             ) {
@@ -166,7 +183,7 @@ class APIView {
             response = handler(req, res, next)
         } catch (e) {
             // 错误响应
-            response = this.handler_exception(e, res)
+            response = this.handlerException(e, res)
         }
         // 返回响应
         return response

@@ -1,7 +1,7 @@
 {
   "name": "restframework-express",
-  "version": "1.1.0",
-  "description": "类Django的express restful插件",
+  "version": "1.2.0",
+  "description": "ES6新特性，使用class来定义API接口，集成认证，权限，序列化，版本，视图，频率，过滤等公共能，插拔式设计模式",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

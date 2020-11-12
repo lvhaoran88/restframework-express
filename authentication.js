@@ -21,14 +21,15 @@ class BaseAuthentication {
         // return [user, token]
     }
 
+    /**
+     *
+     * @param req {Request}
+     */
     authenticate_header(req) {
+
     }
 }
 
-class AuthenticationError extends Error {
-}
-
 module.exports = {
-    BaseAuthentication,
-    AuthenticationError
+    BaseAuthentication
 }

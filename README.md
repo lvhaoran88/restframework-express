@@ -1,16 +1,27 @@
 ## restframework-express
 
-<span style="color:#2db7f5; font-size:24px">功能持续更新中...</span>
-
-<span>敬请期待！</span>
+**restframework-express**是基于`nodejs`后端服务框架`express`用于构建Web API的一个强大且十分灵活的express工具包插件
 
 
 
-**[找到我github](https://github.com/lvhaoran88/restframework-express)**
+**我能做什么：**
 
-> 感谢[django-restframework](https://www.django-rest-framework.org/)
++ router集中管理
++ ES6之后，引入了`class` 关键字来创建类。因此我们使用CBV模式来开发接口，让业务更易于查找、维护
++ 全局/局部的用户(auth)认证
++ 全局/局部的权限(permision)认证
++ 全局/局部的访问频率限制
++ ORM及非ORM数据源序列化、反序列化
++ 在线可视的API
++ 异常处理
+
+
 
 ### 1. 快速使用
+
++ 需求条件
+  + nodejs
+  + express 4.x+
 
 + 安装
 
@@ -114,7 +125,15 @@ module.exports = router;
 
 
 
-[联系我](https://github.com/lvhaoran88/restframework-express)
 
-邮箱: 905097829@qq.com 、 lvhaoran@88.com
+
+<span style="color:#2db7f5; font-size:24px">功能持续更新中...</span>
+
+<span>敬请期待！</span> 
+
+联系我[https://github.com/lvhaoran88/restframework-express](https://github.com/lvhaoran88/restframework-express)
+
+E-mail: 905097829@qq.com 、 lvhaoran@88.com
+
+> 感谢[django-rest-framework](https://www.django-rest-framework.org/)
 

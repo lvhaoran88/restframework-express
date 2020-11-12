@@ -1,8 +1,32 @@
 import {NextFunction, Request, Response} from "express";
-import {Authentication} from "restframework-express/authentication";
+import {Authentication} from "./authentication";
+import {Permissions} from "./permissions";
+
+declare export interface APIView {
+    authenticationClasses: Authentication[];
+    permissionClasses: Permissions[];
+
+    get(res: Request, req: Response, next: NextFunction): any;
+
+    post(res: Request, req: Response, next: NextFunction): any;
+
+    put(res: Request, req: Response, next: NextFunction): any;
+
+    patch(res: Request, req: Response, next: NextFunction): any;
+
+    delete(res: Request, req: Response, next: NextFunction): any;
+
+    head(res: Request, req: Response, next: NextFunction): any;
+
+    options(res: Request, req: Response, next: NextFunction): any;
+
+    trace(res: Request, req: Response, next: NextFunction): any;
+}
+
 
 declare class APIView {
-    authentication_classes: [Authentication] = [];
+    authenticationClasses: Authentication[];
+    permissionClasses: Permissions[];
 
     get(res: Request, req: Response, next: NextFunction): any;
     get(res: Request, req: Response): any;
