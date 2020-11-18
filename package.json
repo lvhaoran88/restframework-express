@@ -12,7 +12,8 @@
     "restful",
     "restframework",
     "api",
-    "rest-api"
+    "rest-api",
+    "express-restful"
   ],
   "author": "lvhaoran",
   "license": "MIT",
